@@ -306,28 +306,13 @@ void task3_1(const Mat& src) {
     Mat floatImg;
     src.convertTo(floatImg, CV_32FC1, 1.0 / 255.0);
     
-//    for (uint i = 0; i < src.rows; i++) {
-//        const uchar* Mi = src.ptr(i);
-//        float* Ni = floatImg.ptr<float>(i);
-//        for (uint j = 0; j < src.cols; j++) {
-//            Ni[j] = log(1 + Ni[j]);
-//        }
-//    }
-    Mat result=Mat::zeros(floatImg.size(),CV_8UC1);
-    //floatImg+=Scalar::all(1.0);
+    Mat result;
+    floatImg+=1.0;
     
-    cv::log(floatImg,floatImg);
-    for(int i=0;i<floatImg.rows;i++){
-        float* Mi = floatImg.ptr<float>(i);
-        for(int j=0;j<floatImg.cols;j++){
-            std::cout<<Mi[j]<<" \n";
-        }
-    }
-//    floatImg.convertTo(floatImg, CV_32FC1, 255.0);
-//    result.convertTo(result,CV_8UC1);
-//    std::cout<<result.channels();
-////
-    imshow("LenaTask3_1.jpg", floatImg);
+    cv::log(floatImg,result);
+    result.convertTo(result,CV_32FC1, 255.0);
+    result.convertTo(result,CV_8UC1);
+    imshow("LenaTask3_1.jpg", result);
 }
 
 Mat powImg(const Mat& src, const int arg) {
@@ -358,24 +343,24 @@ double calculationMSE(const Mat& img1, const Mat& img2) {
     return ans;
 }
 
-void task3_2(const Mat& src) {
+void task3_2(Mat& src) {
+    src.convertTo(src,CV_32FC1,1.0/255.0);
     std::vector<int> arg;
     arg.push_back(2);
     arg.push_back(4);
     arg.push_back(6);
     std::stringstream stream;
     for (int i = 0; i < arg.size(); i++) {
-        Mat res = powImg(src, arg[i]);
+        Mat res;
+        cv::pow(src,arg[i],res);
         stream << "LenaTask3_2_n=";
         stream << arg[i];
         stream << ".jpg";
-
-        imshow(stream.str(), res);
+        res.convertTo(res,CV_8UC1,255.0);
         imwrite(stream.str(), res);
         stream.str(std::string());
         stream.clear();
     }
-    //    waitKey(0);
 }
 
 Mat mythreshold(const Mat& src, const int arg) {
@@ -405,14 +390,14 @@ void task3_3(const Mat& src) {
         Mat tmp;
         threshold(src, tmp, args[i], 255, CV_THRESH_BINARY);
         cv::Mat diff = tmp != result[i];
-        // Equal if no elements disagree
         bool eq = cv::countNonZero(diff) == 0;
         if (!eq) {
-            throw std::invalid_argument("Error");
+            throw std::invalid_argument("Error task3_3");
         }
     }
     Mat mergeResult = merge(result);
-    imshow("mergeThreshold.jpg", mergeResult);
+    imshow("Task3_3.jpg", mergeResult);
+    imwrite("Task3_3.jpg", mergeResult);
     waitKey(0);
 }
 
@@ -475,7 +460,8 @@ Mat computeDFT(Mat image) {
     planes.push_back(Mat::zeros(padded.size(), CV_32F));
     Mat complex;
     merge(planes, complex); // Add to the expanded another plane with zeros
-    dft(complex, complex, DFT_COMPLEX_OUTPUT); // furier transform
+    dft(complex, complex, DFT_COMPLEX_OUTPUT); // furier transformъ
+    std::cout<<complex.channels();
     return complex;
 }
 
@@ -566,8 +552,9 @@ void task6(Mat& src){
 
 int main(int argc, char** argv) {
     //Mat mask = createGausFilterMask(Size(512,512), 256, 256, 510, true, true);
-    Mat src = imread("lena_gray_512.tif",CV_LOAD_IMAGE_GRAYSCALE);
-//    Mat src = imread("lena.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+//    Mat src = imread("lena_gray_512.tif",CV_LOAD_IMAGE_GRAYSCALE);
+    Mat src = imread("lena.jpg",CV_LOAD_IMAGE_GRAYSCALE);
+//    task_3(src);
     task3_1(src);
     waitKey(0);
     return 0;
