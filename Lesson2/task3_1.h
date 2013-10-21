@@ -18,7 +18,7 @@ void task3_1(const Mat& src) {
     cv::log(floatImg,result);
     result.convertTo(result,CV_32FC1, 255.0);
     result.convertTo(result,CV_8UC1);
-    imshow("LenaTask3_1.jpg", result);
+    imwrite("out/LenaTask3_1.jpg", result);
 }
 
 

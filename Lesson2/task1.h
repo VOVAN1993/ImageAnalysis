@@ -26,7 +26,7 @@ void task1(const Mat &image) {
         int mmax = *(std::max_element(channels[i].begin<uchar>(), channels[i].end<uchar>()));
         std::cout<<mmax<<" ";
     }
-    
+    std::cout<<" \n";
     std::vector<std::pair<double, int> > arrParam;
     arrParam.push_back(std::make_pair(0.5, 0));
     arrParam.push_back(std::make_pair(1.0, -125));
@@ -42,12 +42,12 @@ void task1(const Mat &image) {
     param.push_back(concatCh(dsts[1]));
     Mat res1 = mergeVertical(param);
     param.clear();
-    imwrite("Task1Img1+2.jpg",res1);
+    imwrite("out/Task1Img1+2.jpg",res1);
     param.push_back(concatCh(dsts[2]));
     param.push_back(concatCh(dsts[3]));
     param.push_back(concatCh(dsts[4]));
     Mat res2 = mergeVertical(param);
-    imwrite("Task1Img3+4+5.jpg",res2);
+    imwrite("out/Task1Img3+4+5.jpg",res2);
     waitKey(0);
 }
 

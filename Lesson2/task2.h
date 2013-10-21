@@ -21,8 +21,7 @@ void task2(const Mat& image) {
     v.push_back(dst_eq);
     v.push_back(diff);
     Mat allImgs = merge(v);
-    imwrite("Task2.jpg", allImgs);
-    waitKey(0);
+    imwrite("out/Task2.jpg", allImgs);
 }
 
 #endif	/* TASK2_H */

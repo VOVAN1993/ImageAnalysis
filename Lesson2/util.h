@@ -87,35 +87,35 @@ Mat mythreshold(const Mat& src, const int arg) {
         const uchar *Mi = src.ptr(i);
         uchar *Ni = dst.ptr(i);
         for (int j = 0; j < src.cols; j++) {
-            Ni[j] = Mi[j] <= arg ? 0 : 255;
+            Ni[j] = ((int)Mi[j] <= arg) ? 0 : 255;
         }
     }
     return dst;
 }
 
-Mat createMask(Size size, int R, int type, int mx, int my, int flag) {
-    Mat mask = Mat::zeros(size, type);
-    int curX, curY;
-    int r2 = R*R;
-    for (int i = 0; i < mask.rows; i++) {
-        curY = my - i;
-        float *Mi = mask.ptr<float>(i);
-        for (int j = 0; j < mask.cols; j++) {
-            curX = mx - j;
-            if (flag) {
-
-                if (curY * curY + curX * curX >= r2) {
-                    Mi[j] = 1.0f;
-                }
-            } else {
-                if (curY * curY + curX * curX < r2) {
-                    Mi[j] = 1.0f;
-                }
-            }
-        }
-    }
-    return mask;
-}
+//Mat createMask(Size size, int R, int type, int mx, int my, int flag) {
+//    Mat mask = Mat::zeros(size, type);
+//    int curX, curY;
+//    int r2 = R*R;
+//    for (int i = 0; i < mask.rows; i++) {
+//        curY = my - i;
+//        float *Mi = mask.ptr<float>(i);
+//        for (int j = 0; j < mask.cols; j++) {
+//            curX = mx - j;
+//            if (flag) {
+//
+//                if (curY * curY + curX * curX >= r2) {
+//                    Mi[j] = 1.0f;
+//                }
+//            } else {
+//                if (curY * curY + curX * curX < r2) {
+//                    Mi[j] = 1.0f;
+//                }
+//            }
+//        }
+//    }
+//    return mask;
+//}
 
 double mse(const Mat& res, const Mat& dst) {
     CV_Assert(res.type() == dst.type());

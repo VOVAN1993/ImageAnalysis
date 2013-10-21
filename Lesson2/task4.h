@@ -28,14 +28,13 @@ void task4(Mat& image) {
         Mat result;
         merge(newChan, result);
  
-        stream << "Task4img";
+        stream << "out/Task4img";
         stream << j + 1;
         stream << ".jpg";
         cv::imwrite(stream.str(), result);
         stream.str(std::string());
         stream.clear();
     }
-    waitKey(0);
 }
 
 

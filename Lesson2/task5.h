@@ -74,7 +74,7 @@ void task5(Mat& img) {
             gausMerge.push_back(resultGaussBlur[j * 6 + i]);
         }
         std::string nameFile = (i % 2 == 0) ? filterMyNoise : filterGausNoise;
-        stream << nameFile;
+        stream << "out/"<<nameFile;
         stream << i / 2 + 1;
         stream << ".jpg";
         Mat allBlur = merge(blurMerge);
@@ -85,12 +85,10 @@ void task5(Mat& img) {
         arg.push_back(allGaus);
         arg.push_back(allMedian);
         Mat all = mergeVertical(arg);
-        imshow(stream.str(), all);
         imwrite(stream.str(), all);
         stream.str(std::string());
         stream.clear();
     }
-    waitKey(0);
 }
 
 

@@ -24,7 +24,7 @@ void task3(Mat& image) {
         Mat img_result;
         cv::merge(chan, img_result);
 
-        stream << "Task3_img_";
+        stream << "out/Task3_img_";
         stream << j + 1;
         stream << ".jpg";
 

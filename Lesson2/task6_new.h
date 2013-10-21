@@ -9,15 +9,16 @@
 #define	TASK6_NEW_H
 #include "tools.h"
 #include "util.h"
+#include "for_dft.h"
 
 
-void highOrLowPass(cv::Mat& src, int radius,int flag) {
+void highOrLowPass(cv::Mat& src, int r,int flag) {
 
 //1=>high
     int mx = src.cols / 2;
     int my = src.rows / 2;
     int tmpx, tmpy;
-    int r2 = radius * radius;
+    int R2 = r*r;
 
     for (int i = 0; i < src.rows; ++i) {
         float *Mi = src.ptr<float>(i);
@@ -25,10 +26,10 @@ void highOrLowPass(cv::Mat& src, int radius,int flag) {
         for (int j = 0; j < src.cols; ++j) {
             tmpx = mx - j;
             if (flag) {
-                if (tmpy * tmpy + tmpx * tmpx < r2) 
+                if (tmpy * tmpy + tmpx * tmpx < R2) 
                     Mi[j] = 0.0;
             } else {
-                if (tmpy * tmpy + tmpx * tmpx >= r2) 
+                if (tmpy * tmpy + tmpx * tmpx >= R2) 
                     Mi[j] = 0.0;
             }
         }
@@ -68,7 +69,8 @@ std::vector<Mat> transformSpectrum(const Mat& image, int R, int flag) {
     return result;
 }
 
-void task6_new(const Mat& src) {
+void task6_new(Mat& src) {
+    cv::cvtColor(src, src, CV_BGR2GRAY);
     std::vector<int> arg;
     arg.push_back(5);
     arg.push_back(15);
@@ -79,9 +81,9 @@ void task6_new(const Mat& src) {
     for (int i = 0; i < arg.size(); i++) {
         for (int j = 0; j <= 1; j++) {
             std::vector<Mat> result = transformSpectrum(src, arg[i], j);
-            stream << "Task6_R=";
+            stream << "out/Task6_R=";
             stream << arg[i];
-            if (j)
+            if (!j)
                 stream << "LowPass";
             else
                 stream << "HighPass";

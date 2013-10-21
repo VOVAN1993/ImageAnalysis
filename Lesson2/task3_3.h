@@ -8,8 +8,11 @@
 #ifndef TASK3_3_H
 #define	TASK3_3_H
 #include "util.h"
-void task3_3(const Mat& src) {
+
+
+void task3_3( const Mat& src) {
     std::vector<int> args;
+    src.convertTo(src,CV_8UC1);
     args.push_back(20);
     args.push_back(30);
     args.push_back(40);
@@ -29,8 +32,7 @@ void task3_3(const Mat& src) {
         }
     }
     Mat mergeResult = merge(result);
-    imshow("Task3_3.jpg", mergeResult);
-    imwrite("Task3_3.jpg", mergeResult);
+    imwrite("out/Task3_3.jpg", mergeResult);
     waitKey(0);
 }
 
