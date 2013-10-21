@@ -93,20 +93,6 @@ Mat mythreshold(const Mat& src, const int arg) {
     return dst;
 }
 
-void PassFilter(cv::Mat& magnitude, int radius) {
-
-
-
-
-    for (int i = 0; i < magnitude.rows; ++i) {
-
-        for (int j = 0; j < magnitude.cols; ++j) {
-
-
-        }
-    }
-}
-
 Mat createMask(Size size, int R, int type, int mx, int my, int flag) {
     Mat mask = Mat::zeros(size, type);
     int curX, curY;

@@ -11,7 +11,6 @@
 
 Mat updateResult(Mat complex) {
     Mat work;
-   // idft(complex, work);
     cv::dft(complex, work, cv::DFT_SCALE | cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT);
     Mat planes[] = {Mat::zeros(complex.size(), CV_32F), Mat::zeros(complex.size(), CV_32F)};
     split(work, planes); // planes[0] = Re(DFT(I)), planes[1] = Im(DFT(I))
@@ -42,13 +41,13 @@ void shift(Mat magI) {
     tmp.copyTo(q2);
 }
 
-Mat updateMag(Mat complex) {
+Mat updateMag(Mat& complex) {
 
-    Mat magI;
-    Mat planes[] = {Mat::zeros(complex.size(), CV_32F), Mat::zeros(complex.size(), CV_32F)};
-    split(complex, planes); // planes[0] = Re(DFT(I)), planes[1] = Im(DFT(I))
-
-    magnitude(planes[0], planes[1], magI); // sqrt(Re(DFT(I))^2 + Im(DFT(I))^2)
+    Mat magI = complex.clone();
+//    Mat planes[] = {Mat::zeros(complex.size(), CV_32F), Mat::zeros(complex.size(), CV_32F)};
+//    split(complex, planes); // planes[0] = Re(DFT(I)), planes[1] = Im(DFT(I))
+//
+//    magnitude(planes[0], planes[1], magI); // sqrt(Re(DFT(I))^2 + Im(DFT(I))^2)
 
     // switch to logarithmic scale: log(1 + magnitude)
     magI += Scalar::all(1);
@@ -56,6 +55,7 @@ Mat updateMag(Mat complex) {
 
     shift(magI);
     normalize(magI, magI, 1, 0, NORM_INF); // Transform the matrix with float values into a
+    magI.convertTo(magI,CV_8UC1,255);
     return magI;
 }
 

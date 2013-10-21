@@ -40,24 +40,24 @@ void task5(Mat& img) {
     for (int j = 0; j < 3; j++) {
         for (int i = 0; i < 3; i++) {
             int ksize = 3 + 2 * i;
-            Mat tmp = Mat(img.rows, img.cols, CV_8UC1);
+            Mat tmp = Mat(img.rows, img.cols, CV_8UC3);
             cv::blur(myLenaNoiseImgs[j], tmp, cv::Size(ksize, ksize));
             resultBlur.push_back(tmp);
-            tmp = Mat(img.rows, img.cols, CV_8UC1);
+            tmp = Mat(img.rows, img.cols, CV_8UC3);
             cv::blur(gausNoiseImgs[j], tmp, cv::Size(ksize, ksize));
             resultBlur.push_back(tmp);
 
-            tmp = Mat(img.rows, img.cols, CV_8UC1);
+            tmp = Mat(img.rows, img.cols, CV_8UC3);
             cv::medianBlur(myLenaNoiseImgs[j], tmp, ksize);
             resultMedianBlur.push_back(tmp);
-            tmp = Mat(img.rows, img.cols, CV_8UC1);
+            tmp = Mat(img.rows, img.cols, CV_8UC3);
             cv::medianBlur(gausNoiseImgs[j], tmp, ksize);
             resultMedianBlur.push_back(tmp);
 
-            tmp = Mat(img.rows, img.cols, CV_8UC1);
+            tmp = Mat(img.rows, img.cols, CV_8UC3);
             cv::GaussianBlur(myLenaNoiseImgs[j], tmp, cv::Size(ksize, ksize), 0);
             resultGaussBlur.push_back(tmp);
-            tmp = Mat(img.rows, img.cols, CV_8UC1);
+            tmp = Mat(img.rows, img.cols, CV_8UC3);
             cv::GaussianBlur(gausNoiseImgs[j], tmp, cv::Size(ksize, ksize), 0);
             resultGaussBlur.push_back(tmp);
         }
