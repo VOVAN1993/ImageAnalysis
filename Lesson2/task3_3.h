@@ -26,7 +26,7 @@ void task3_3( const Mat& src) {
         Mat tmp;
         threshold(src, tmp, args[i], 255, CV_THRESH_BINARY);
         cv::Mat diff = tmp != result[i];
-        bool eq = cv::countNonZero(diff) == 0;
+        bool eq = cv::countNonZero(diff) == 0;//количество ненулевых элементов для проверки
         if (!eq) {
             throw std::invalid_argument("Error task3_3");
         }

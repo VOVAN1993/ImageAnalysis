@@ -24,7 +24,7 @@ void task3_6(Mat& src, Mat noise) {
     Mat tmp;
     cv::matchTemplate(src, noise, tmp, CV_TM_SQDIFF);
     std::cout << "RMSE: " << tmp / (src.rows * src.cols * src.channels()) << std::endl;
-    imwrite("Task3_6.jpg",noise);
+    imwrite("out/Task3_6.jpg",noise);
 }
 
 

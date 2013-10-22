@@ -9,6 +9,7 @@
 #define	TASK4_H
 #include "util.h"
 void task4(Mat& image) {
+    //входные параметры
     std::vector<std::pair<double, double> > arg;
     arg.push_back(std::make_pair(0.0, 30.0));
     arg.push_back(std::make_pair(0.0, 60.0));
@@ -22,6 +23,7 @@ void task4(Mat& image) {
         std::vector<cv::Mat> newChan;
         for(int i=0;i<ch.size();i++){
             Mat tmp;
+            //добавление гуссового шума
             addGausNoise(ch[i], tmp, arg[j].first,arg[j].second);
             newChan.push_back(tmp);
         }

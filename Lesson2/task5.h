@@ -12,8 +12,9 @@ void task5(Mat& img) {
     std::vector<Mat> gausNoiseImgs;
     std::vector<Mat> myLenaNoiseImgs;
     std::stringstream stream;
+    //загрузка изображений
     for (int i = 0; i < 3; i++) {
-        stream << "Task4img";
+        stream << "out/Task4img";
         stream << i + 1;
         stream << ".jpg";
         Mat tmp = imread(stream.str());
@@ -22,7 +23,7 @@ void task5(Mat& img) {
         stream.clear();
     }
     for (int i = 0; i < 3; i++) {
-        stream << "Task3_img_";
+        stream << "out/Task3_img_";
         stream << i + 1;
         stream << ".jpg";
         Mat tmp = imread(stream.str());
@@ -37,16 +38,18 @@ void task5(Mat& img) {
     std::vector<Mat> resultGaussBlur;
 
    
-    for (int j = 0; j < 3; j++) {
-        for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {//по изобра-ям
+        for (int i = 0; i < 3; i++) {//по размеру ядра
             int ksize = 3 + 2 * i;
             Mat tmp = Mat(img.rows, img.cols, CV_8UC3);
+            //blur для j-го из myLenaNoiseImgs и gausNoiseImgs
             cv::blur(myLenaNoiseImgs[j], tmp, cv::Size(ksize, ksize));
             resultBlur.push_back(tmp);
             tmp = Mat(img.rows, img.cols, CV_8UC3);
             cv::blur(gausNoiseImgs[j], tmp, cv::Size(ksize, ksize));
             resultBlur.push_back(tmp);
 
+            //medianblur для j-го из myLenaNoiseImgs и gausNoiseImgs
             tmp = Mat(img.rows, img.cols, CV_8UC3);
             cv::medianBlur(myLenaNoiseImgs[j], tmp, ksize);
             resultMedianBlur.push_back(tmp);
@@ -54,6 +57,7 @@ void task5(Mat& img) {
             cv::medianBlur(gausNoiseImgs[j], tmp, ksize);
             resultMedianBlur.push_back(tmp);
 
+            //gaussianblur для j-го из myLenaNoiseImgs и gausNoiseImgs
             tmp = Mat(img.rows, img.cols, CV_8UC3);
             cv::GaussianBlur(myLenaNoiseImgs[j], tmp, cv::Size(ksize, ksize), 0);
             resultGaussBlur.push_back(tmp);
@@ -68,11 +72,13 @@ void task5(Mat& img) {
         std::vector<Mat> blurMerge;
         std::vector<Mat> medianMerge;
         std::vector<Mat> gausMerge;
+        //достаем нужные изображения
         for (int j = 0; j < 3; j++) {
             blurMerge.push_back(resultBlur[j * 6 + i]);
             medianMerge.push_back(resultMedianBlur[j * 6 + i]);
             gausMerge.push_back(resultGaussBlur[j * 6 + i]);
         }
+        //склейка и сохранение
         std::string nameFile = (i % 2 == 0) ? filterMyNoise : filterGausNoise;
         stream << "out/"<<nameFile;
         stream << i / 2 + 1;

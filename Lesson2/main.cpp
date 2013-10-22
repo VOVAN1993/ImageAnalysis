@@ -14,6 +14,8 @@
 #include "task3_5.h"
 
 int main(int argc, char** argv) {
+    //подгружаем все изображения
+    //сохранять будет в папку /out
     Mat dst_fornoise = imread("lena_color_512.tif");
     Mat lena = imread("Lena.jpg");
     Mat lena_gray = imread("Lena.jpg", CV_LOAD_IMAGE_GRAYSCALE);
@@ -32,6 +34,5 @@ int main(int argc, char** argv) {
     task3_3(lena_gray);
     task3_5(src_diag, dst_diag);
     task3_6(dst_fornoise, src_noise);
-    //    waitKey(0);
     return 0;
 }

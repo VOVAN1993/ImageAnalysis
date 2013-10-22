@@ -9,6 +9,7 @@
 #define	TASK3_H
 #include "util.h"
 void task3(Mat& image) {
+    //входные параметры
     std::vector<std::pair<double, double> > arg;
     arg.push_back(std::make_pair(0.05, 0.05));
     arg.push_back(std::make_pair(0.1, 0.1));
@@ -19,9 +20,11 @@ void task3(Mat& image) {
     std::stringstream stream;
     for (int j = 0; j < arg.size(); j++) {
         for (int i = 0; i < chan.size(); i++) {
+            //добавление шума
             addNoise(chan[i], arg[j].first, arg[j].second);
         }
         Mat img_result;
+        //слияние
         cv::merge(chan, img_result);
 
         stream << "out/Task3_img_";

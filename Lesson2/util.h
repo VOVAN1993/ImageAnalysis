@@ -9,7 +9,7 @@
 #define	UTIL_H
 #include "tools.h"
 
-void scaleImg(const Mat& src, Mat& dst, double alpha, double beta) {
+void myConvert(const Mat& src, Mat& dst, double alpha, double beta) {
     dst = src * alpha + Scalar(beta, beta, beta);
 }
 
@@ -33,6 +33,7 @@ Mat mergeVertical(const std::vector<Mat>& imgs) {
 }
 
 Mat merge(const std::vector<Mat>& imgs) {
+    //горизонтальное соединение изображений
     for (uint i = 1; i < imgs.size(); i++) {
         if (imgs[i].size() != imgs[i - 1].size() || imgs[i].size() != imgs[i - 1].size()) {
             throw std::invalid_argument("Images must be the same size");
@@ -93,40 +94,5 @@ Mat mythreshold(const Mat& src, const int arg) {
     return dst;
 }
 
-//Mat createMask(Size size, int R, int type, int mx, int my, int flag) {
-//    Mat mask = Mat::zeros(size, type);
-//    int curX, curY;
-//    int r2 = R*R;
-//    for (int i = 0; i < mask.rows; i++) {
-//        curY = my - i;
-//        float *Mi = mask.ptr<float>(i);
-//        for (int j = 0; j < mask.cols; j++) {
-//            curX = mx - j;
-//            if (flag) {
-//
-//                if (curY * curY + curX * curX >= r2) {
-//                    Mi[j] = 1.0f;
-//                }
-//            } else {
-//                if (curY * curY + curX * curX < r2) {
-//                    Mi[j] = 1.0f;
-//                }
-//            }
-//        }
-//    }
-//    return mask;
-//}
-
-double mse(const Mat& res, const Mat& dst) {
-    CV_Assert(res.type() == dst.type());
-    CV_Assert(res.size() == dst.size());
-    Mat t;
-    cv::matchTemplate(dst, res, t, CV_TM_SQDIFF);
-    std::stringstream str;
-    str << t / (res.rows * res.cols);
-    double ans;
-    str >> ans;
-    return ans;
-}
 #endif	/* UTIL_H */
 
