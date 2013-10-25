@@ -18,12 +18,6 @@ bool cmpPointY(const cv::Point& p1, const cv::Point& p2) {
 bool cmpCircle(const std::vector<Point>& a, const std::vector<Point>& b) {
     return a.size() > b.size();
 }
-std::string genNumberString(int number) {
-    char buf[16];
-    sprintf(buf, "%d", number);
-    return std::string(buf);
-}
-
 cv::Point calculateCoordCenter(const std::vector<Point>& cnt) {
     int xMax = (*std::max_element(cnt.begin(), cnt.end(), cmpPointX)).x;
     int xMin = (*std::min_element(cnt.begin(), cnt.end(), cmpPointX)).x;
@@ -33,7 +27,8 @@ cv::Point calculateCoordCenter(const std::vector<Point>& cnt) {
     return Point((xMax + xMin) / 2, (yMax + yMin) / 2);
 }
 void task1(Mat& src) {
-    Mat src_gray = imread("src");
+    CV_Assert(!src.empty());
+    Mat src_gray;
     cvtColor(src, src_gray, CV_BGR2GRAY);
     blur(src_gray,src_gray,Size(3,3));
     Mat canny_output;
@@ -55,7 +50,7 @@ void task1(Mat& src) {
         stream.str(std::string());
         stream.clear();
     }
-    imshow("cont", canny_output);
+    imshow("cont", drawing);
 }
 
 #endif	/* TASK1_H */
