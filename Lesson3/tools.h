@@ -15,6 +15,7 @@
 #include <time.h>
 #include <opencv2/highgui/highgui_c.h>   
 #include <algorithm>
+#include <map>
 using namespace cv;
 
 #endif	/* TOOLS_H */

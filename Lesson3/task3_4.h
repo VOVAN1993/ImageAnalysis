@@ -35,7 +35,7 @@ void task3_4(const Mat& src){
             Point(r/2, r));//2r x r
     morphologyEx(tmp1,tmp1,MORPH_CLOSE,element_vert);
     bitwise_and(res,tmp1,res);
-    imshow("res",res);
+    imwrite("out/table.jpg",res);
     imshow("tmp1",local_src);
     
 
