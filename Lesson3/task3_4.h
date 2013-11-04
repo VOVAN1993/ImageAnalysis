@@ -8,36 +8,29 @@
 #ifndef TASK3_4_H
 #define	TASK3_4_H
 #include "tools.h"
-
+Mat rotateImage(const Mat& source, double angle) {
+    //поворот изображения
+    Point2f src_center(source.cols / 2.0F, source.rows / 2.0F);
+    Mat rot_mat = getRotationMatrix2D(src_center, angle, 1.0);
+    Mat dst;
+    warpAffine(source, dst, rot_mat, source.size());
+    return dst;
+}
 void task3_4(const Mat& src){
-    Mat local_src = src.clone();
-    threshold(local_src,local_src,230,255,CV_THRESH_BINARY);
-    int r=10;
-    cvtColor(local_src,local_src,CV_BGR2GRAY);
-
-    Mat tmp1 = Mat::zeros(local_src.size(),local_src.type());
-    Mat tmp2 = Mat::zeros(local_src.size(),local_src.type());
-    Mat element1 = getStructuringElement(MORPH_RECT,
-            Size(1, 2*r),
-            Point(0, r));  //1x2*r
-    Mat element2 = getStructuringElement(MORPH_RECT,
-            Size(2*r, 1),
-            Point(r, 0));  //(2*r)x1
-    morphologyEx(local_src,tmp1,MORPH_CLOSE,element1);
-    morphologyEx(local_src,tmp2,MORPH_CLOSE,element2);
-    Mat res;
-    bitwise_and(tmp1,tmp2,res);
-    
-    
-    morphologyEx(local_src,tmp1,MORPH_OPEN,element2);
-    Mat element_vert = getStructuringElement(MORPH_RECT,
-            Size(r, 2*r),
-            Point(r/2, r));//2r x r
-    morphologyEx(tmp1,tmp1,MORPH_CLOSE,element_vert);
-    bitwise_and(res,tmp1,res);
-    imwrite("out/table.jpg",res);
-    imshow("tmp1",local_src);
-    
+    Mat tmp=src.clone();
+    medianBlur(tmp,tmp,5);
+    threshold(tmp,tmp,100,255,CV_THRESH_BINARY);
+    int r=5000;
+    bitwise_not(tmp,tmp);
+    Mat element1 = getStructuringElement(MORPH_CROSS,
+            Size(r,1),
+            Point(r-1, 0));
+//    element1 = rotateImage(element1,45.);
+//    erode(tmp,tmp,element1);
+//    dilate(tmp,tmp,element1);
+//    erode(tmp,tmp,element1);
+//    imshow("src",src);
+    imshow("tmp",1000*element1);
 
 }
 

@@ -8,6 +8,7 @@
 #ifndef TASK3_H
 #define	TASK3_H
 #include "tools.h"
+#include "util.h"
 
 Mat createColorVetor(int n, Mat& markers) {
     cv::Mat dst = cv::Mat::zeros(markers.size(), CV_8UC3);
@@ -34,75 +35,55 @@ Mat createColorVetor(int n, Mat& markers) {
 }
 
 void part2(Mat& image) {
-    //Mat markers = coins.clone();
-    Mat binary, res;
+    Mat binary,dist,dist_8u;
+    int thresh_value=13;
+    int erosion_size = 7;
+    cv::Mat eros_element = cv::getStructuringElement(cv::MORPH_RECT,
+            cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1));
     cv::subtract(cv::Scalar::all(255), image, binary);
     cvtColor(binary, binary, CV_BGR2GRAY);
-    threshold(binary, res, 13, 255, CV_THRESH_BINARY);
-    medianBlur(res, binary, 5);
+    threshold(binary, binary, thresh_value, thresh_max_value, CV_THRESH_BINARY);
+    medianBlur(binary, binary, 5);    
+    
+    cv::erode(binary, binary, eros_element);
 
-    Mat rr;
-    int erosion_size = 7;
-    cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT,
-            cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1));
-    //
-    cv::erode(binary, rr, element);
-
-    cv::Mat dist;
-    cv::distanceTransform(rr, dist, CV_DIST_L2, 3);
-    cv::normalize(dist, dist, 0, 1., cv::NORM_MINMAX);
-
-    cv::threshold(dist, dist, 0.6, 1, CV_THRESH_BINARY);
-
-    Mat rr2;
+    cv::distanceTransform(binary, binary, CV_DIST_L2, 3);
+    cv::normalize(binary, binary, 0, 1., NORM_MINMAX);
+    cv::threshold(binary, dist, .6, 1, CV_THRESH_BINARY);
     int erosion_size2 = 12;
     cv::Mat element2 = cv::getStructuringElement(cv::MORPH_ELLIPSE,
             cv::Size(erosion_size2, erosion_size2));
-
-    cv::erode(dist, rr2, element2);
-
-    Mat rr3;
-    int erosion_size3 = 40;
-    cv::Mat element3 = cv::getStructuringElement(cv::MORPH_ELLIPSE,
-            cv::Size(erosion_size3, erosion_size3));
-
-    cv::dilate(rr2, rr3, element3);
     
+    cv::erode(dist, dist, element2);
 
-    std::vector<std::vector<Point> > contours;
-    std::vector<Vec4i> hierarchy;
-    rr3.convertTo(rr3, CV_8UC1);
-    /// Find contours
-    findContours(rr3, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0));
-    std::vector<std::vector<Point> > contours_poly(contours.size());
+    VVP contours;
+    dist.convertTo(dist, CV_8UC1);
+    findContours(dist, contours, noArray(), CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
     std::vector<Point2f>center(contours.size());
     std::vector<float>radius(contours.size());
+    
     for (int i = 0; i < contours.size(); i++) {
-        approxPolyDP(Mat(contours[i]), contours_poly[i], 3, true);
         minEnclosingCircle((Mat) contours[i], center[i], radius[i]);
     }
-    Mat drawing = Mat::zeros(rr3.size(), CV_8UC3);
+    
+    Mat drawing = Mat::zeros(dist.size(), CV_8UC3);
     for (int i = 0; i < contours.size(); i++) {
-        Scalar color = Scalar(255, 255, 255);
-        circle(drawing, center[i], 10, color, 2, 8, 0);
-        floodFill(drawing, center[i], Scalar(255, 255, 255));
+        radius[i]+=20;
+        Scalar color = Scalar::all(255);
+        circle(drawing, center[i], radius[i], color);
+        floodFill(drawing, center[i], color);
     }
-//    imshow("frssda", drawing);
-
-    cv::Mat dist_8u;
     cvtColor(drawing, drawing, CV_BGR2GRAY);
-    drawing.convertTo(drawing, CV_8UC1);
-    rr3.convertTo(dist_8u, CV_8U);
+    drawing.convertTo(dist_8u, CV_8U);
 
     cv::findContours(dist_8u, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-    int ncomp = contours.size();
     cv::Mat markers = cv::Mat::zeros(dist.size(), CV_32SC1);
-    for (int i = 0; i < ncomp; i++)
-        cv::drawContours(markers, contours, i, cv::Scalar::all(i + 1), -1);
-    cv::circle(markers, cv::Point(5, 5), 3, CV_RGB(255, 255, 255), 1);
+    for (int i = 0; i < contours.size(); i++)
+        cv::drawContours(markers, contours, i, Scalar::all(i + 1), -1);
+    cv::circle(markers, cv::Point(10, 10), 3, Scalar::all(255), 1);
     cv::watershed(image, markers);
-    res = createColorVetor(contours.size(), markers);
-    imwrite("out/coins_4.jpg", res);
+    Mat res = createColorVetor(contours.size(), markers);
+    imshow("out/coins_4.jpg", res);
 }
 
 void part1(Mat& coins) {
@@ -147,9 +128,11 @@ void part1(Mat& coins) {
 }
 
 void task3(Mat& coins_3, Mat& coins_4) {
+    CV_Assert(!coins_3.empty());
+    
     //    CV_Assert(!src.empty());
     part2(coins_4);
-    part1(coins_3);
+//    part1(coins_3);
     
 }
 

@@ -17,6 +17,10 @@
 #include <algorithm>
 #include <map>
 using namespace cv;
+using namespace std;
+typedef std::vector<std::vector<Point> > VVP;
+typedef std::vector<cv::Point> VP;
+#define ALL(v) v.begin(), v.end()
 
 #endif	/* TOOLS_H */
 
