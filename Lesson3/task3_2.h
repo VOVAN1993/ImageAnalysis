@@ -10,23 +10,26 @@
 #include "tools.h"
 #include <limits.h>
 
-void task3_2(const Mat& src,int background){
+Mat task3_2(const Mat& src,int background){
     background*=255;
     CV_Assert(src.type()==CV_8UC1);
     Mat binary;
     threshold(src,binary,128,255,CV_THRESH_BINARY);
     int c=0;
-    std::vector<std::vector<int> > mat(src.rows,std::vector<int>(src.cols,0));
-    std::vector<int> bestNum(1,0);
+    //номер компоненты для каждого пикселя
+    vector<vector<int> > mat(src.rows,vector<int>(src.cols,0));
+    //для первого прохода.
+    vector<int> bestNum(1,0);
     
     for(int i=0;i<binary.rows;i++){
         uchar *Mi=binary.ptr(i);
         for(int j=0;j<binary.cols;j++){
             bool b=false;
-            std::vector<int> neib;
+            vector<int> neib;
             if(Mi[j]==background)continue;
-            for(int ii=std::max(i-1,0);ii<=std::min(i+1,binary.rows-1);ii++){
-                for(int jj=std::max(j-1,0);jj<=std::min(j+1,binary.cols-1);jj++){
+            for(int ii=max(i-1,0);ii<=min(i+1,binary.rows-1);ii++){
+                for(int jj=max(j-1,0);jj<=min(j+1,binary.cols-1);jj++){
+                    //пробегаем всех соседей
                     uchar val = binary.at<uchar>(ii,jj);
                     if(val!=Mi[j] || mat[ii][jj]==0)continue;
                     b=true;
@@ -34,11 +37,13 @@ void task3_2(const Mat& src,int background){
                 }
             }
             if(!b){
+              //если не обнаружили уже помеченных соседей нужного цвета
+              //,то новая компонента
               c++;
               mat[i][j]=c;
               bestNum.push_back(c);
             }else{
-                std::sort(neib.begin(),neib.end());
+                sort(neib.begin(),neib.end());
                 mat[i][j]=bestNum[neib[0]];
                 for(int ii=0;ii<neib.size();ii++){
                     bestNum[neib[ii]]=mat[i][j];
@@ -46,23 +51,14 @@ void task3_2(const Mat& src,int background){
             }
         }
     }
-    
+    //второй проход, соединяем соседей
     for(int i=0;i<mat.size();i++){
         for(int j=0;j<mat[i].size();j++){
             mat[i][j]=bestNum[mat[i][j]];
         }
     }
-//    for(int i=0;i<mat.size();i++){
-//        for(int j=0;j<mat[i].size();j++){
-//            std::cout<<mat[i][j]<<" ";
-//        }
-//        std::cout<<" \n";
-//    }
-//    for(int i=0;i<bestNum.size();i++){
-//        std::cout<<bestNum[i]<<" ";
-//    }
-      
-    std::map<int,Scalar> map;
+    //окрашиваем
+    map<int,Scalar> map;
     RNG rng(12345);
     for(int i=0;i<c;i++){
         int r=rng.next()%256;
@@ -86,7 +82,7 @@ void task3_2(const Mat& src,int background){
         }
     }
 
-    imwrite("asd.png",result);
+    return result;
 }
 
 

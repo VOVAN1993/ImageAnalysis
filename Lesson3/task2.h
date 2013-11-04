@@ -1,4 +1,3 @@
-// -*- C++ -*-
 /* 
  * File:   task2.h
  * Author: vovan
