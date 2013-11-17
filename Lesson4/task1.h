@@ -8,16 +8,16 @@
 #ifndef TASK1_H
 #define	TASK1_H
 #include "util.h"
-const string name_L1="L1";
-const string name_X2="X2";
+const string name_L1=PATH_TO_OUT+"/"+"L1.txt";
+const string name_X2=PATH_TO_OUT+"/"+"X2.txt";
 
 vector<int> calculateHist(Mat src, const uchar kolX, const uchar kolY,
         const uchar kolZ) {
     
-    const int lenX = 256 / kolX;
+    const int lenX = 180 / kolX;
     const int lenY = 256 / kolY;
     const int lenZ = 256 / kolZ;
-    const int len = kolX * kolY * (255/lenZ) + kolX*(255/lenY)+255/lenX +1 ;
+    const int len = kolX * kolY * (255/lenZ) + kolX*(255/lenY)+180/lenX +1 ;
     vector<int> histogram(len, 0);
  
     for (int x = 0; x < src.rows; ++x) {
@@ -32,7 +32,6 @@ vector<int> calculateHist(Mat src, const uchar kolX, const uchar kolY,
         }
     }
 
-
     return histogram;
 }
 
@@ -41,7 +40,7 @@ double compareByL1(const vector<double>& histogram1, const vector<double>& histo
     for (int i = 0; i < histogram1.size(); ++i) {
         res += std::min(histogram1[i], histogram2[i]);
     }
-    return 1 - res;
+    return 1.0 - res;
 }
 
 double compareByX2(const vector<double>& histogram1, const vector<double>& histogram2) {
@@ -83,7 +82,7 @@ void task1(uint Kx, uint Ky, uint Kz) {
             if (entry->d_type != 4) {
                 string s=entry->d_name;
 
-                Mat imageBGR = imread(PATH_TO_COREL+s,CV_LOAD_IMAGE_COLOR);
+                Mat imageBGR = imread(PATH_TO_COREL+'/'+s,CV_LOAD_IMAGE_COLOR);
                 Mat imageHSV;
 
                 cvtColor(imageBGR, imageHSV, CV_BGR2HSV);
