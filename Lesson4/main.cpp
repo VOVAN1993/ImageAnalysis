@@ -9,8 +9,15 @@
 #include "tools.h"
 #include "util.h"
 #include "task2.h"
+#include "task3.h"
 
-int main(int argc, char** argv) {
+
+int main() {
+    task1(20,20,20);
     task2();
+    task3();
+
     return 0;
+
+
 }

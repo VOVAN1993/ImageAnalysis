@@ -10,7 +10,7 @@
 #define	TASK2_H
 #include "util.h"
 #include "tools.h"
-std::pair<string,vector<ll> > first_elem;
+
 cv::Mat getKernel(int ks, double sig, double th, double lm, double ps) {
     int hks = (ks - 1) / 2;
     double theta = th * CV_PI / 180;
@@ -39,32 +39,34 @@ Mat getGabor(double pos_th, double pos_sigma, double pos_lm, double pos_psi, int
     cv::Mat kernel = getKernel(kernel_size, sig, th, lm, ps);
     return kernel;
 }
-bool cmpEnergy(std::pair<string,vector<ll> > a,std::pair<string,vector<ll> > b){
-    ll res_a=0,res_b=0;
-    for(int i=0;i<a.second.size();++i){
-        res_a+=a.second[i]-first_elem.second[i];
-        res_b+=b.second[i]-first_elem.second[i];
+
+ll diffEnergy(std::pair<string, vector<ll> > a, std::pair<string, vector<ll> > b) {
+    ll res = 0;
+    for (int i = 0; i < a.second.size(); ++i) {
+        res += a.second[i] - b.second[i];
     }
-    res_a=abs(res_a);
-    res_b=abs(res_b);
-    return res_a<res_b;
+    res = abs(res);
+    return res;
+}
+
+bool cmpPair(pair<string, ll>a, pair<string, ll>b) {
+    return a.second < b.second;
 }
 
 void task2() {
     vector<Mat> gabors;
+    //формируем банк фильтров габора, меняя параметры тэта,лямбда,пси
     for (int i = 0; i <= 180; i += 45) {
-        for (int j = 0; j <= 100; j += 25) {
-            for (int k = 3; k <= 8; k++) {
-                for(int h=10;h<=100;h+=20){
-                Mat tmp = getGabor(i, k, j, h, 21);
+        for (int j = 0; j <= 100; j += 50) {
+            for (int k = 20; k <= 100; k+=30) {
+                Mat tmp = getGabor(i, 6, j, k, 21);
                 gabors.push_back(tmp);
             }
         }
     }
-    }
-    vector<std::pair<string,long long> > ans;
-    vector<std::pair<string,vector<ll> > > mmap;
-    DIR *dir = opendir(PATH_TO_COREL.c_str());
+    vector<std::pair<string, ll> > ans;
+    vector<std::pair<string, vector<ll> > > mmap;
+    DIR *dir = opendir(PATH_TO_BR.c_str());
     vector<string> names;
     if (dir) {
         struct dirent *entry;
@@ -72,48 +74,52 @@ void task2() {
             if (entry->d_type != 4) {
                 string name = entry->d_name;
                 names.push_back(name);
-                Mat imageBGR = imread(PATH_TO_COREL + '/' + name);
+                
+                Mat imageBGR = imread(PATH_TO_BR + '/' + name);
                 cv::Mat img_gray1;
                 cv::cvtColor(imageBGR, img_gray1, CV_BGR2GRAY);
                 img_gray1.convertTo(imageBGR, CV_32F, 1.0 / 255.0);
                 vector<ll> tmpEnergy(gabors.size());
+                //применяем к изображению все фильтры из банка
                 ll ret = 0;
                 for (int i = 0; i < gabors.size(); i++) {
                     Mat dest;
                     cv::filter2D(imageBGR, dest, CV_32F, gabors[i]);
+                    for (int ii = 0; ii < dest.rows; ii++) {
+                        float *Mi = dest.ptr<float>(ii);
+                        for (int j = 0; j < dest.cols; j++) {
+                            if (Mi[j] < 0.0)Mi[j] = 0.0;
+                        }
+                    }
+                    //нормализуем
+                    normalize(dest, dest, 0.0, 1.0, NORM_MINMAX, CV_32F);
+                    //считаем энергию (по ней будем сравнивать)
                     cv::pow(dest, 2, dest);
                     dest.convertTo(dest, CV_8UC1, 255);
                     ll sum = cv::sum(dest)[0];
-                    tmpEnergy[i]=sum;
+                    tmpEnergy[i] = sum;
                 }
-                mmap.push_back(make_pair(name,tmpEnergy));
-                cout<<name<<"\n";
+                mmap.push_back(make_pair(name, tmpEnergy));
             }
         }
     }
-    stringstream answer;
-    for(int i=0;i<names.size();i++){
-        string name=names[i];
-        int j=0;
-        for(;j<mmap.size();j++){
-            if(mmap[j].first!=name)continue;
-            break;
+    //компануем пары и сортируем
+    vector<pair<string, ll> > toFile;
+    for (int i = 0; i < mmap.size() - 1; i++) {
+        string name1 = mmap[i].first;
+        for (int j = i + 1; j < mmap.size(); j++) {
+            string name2 = mmap[j].first;
+            ll diff = diffEnergy(mmap[i], mmap[j]);
+            pair<string, ll> ppair = make_pair(name1 + "::" + name2, diff);
+            toFile.push_back(ppair);
         }
-        std::swap(mmap[j],mmap[0]);
-        first_elem=mmap[0];
-        sort(ALL(mmap),cmpEnergy);
-        answer<<"for "<<first_elem.first<<":::\n";
-        for(int k=0;k<mmap.size();k++){
-            answer<<mmap[k].first<<"\n";
-        }
-        answer<<"---------------------\n";
-        cout<<i<<"\n";
     }
-    cout<<answer.str();
-    freopen("res1.txt", "w", stdout);
-    cout<<answer.str();
+    sort(ALL(toFile), cmpPair);
+    freopen("out/task2.txt", "w", stdout);
+    for (int i = 0; i < toFile.size(); i++) {
+        cout << toFile[i].first << "\n";
+    }
     fclose(stdout);
-    waitKey(0);
 }
 
 

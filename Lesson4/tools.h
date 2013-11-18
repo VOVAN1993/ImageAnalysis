@@ -29,7 +29,8 @@ typedef std::vector<cv::Point> VP;
 #define ALL(v) v.begin(), v.end()
 typedef unsigned long long ull;
 typedef long long ll;
-const string PATH_TO_COREL="br";
+const string PATH_TO_COREL="Corel";
+const string PATH_TO_BR="br";
 const string PATH_TO_OUT = "out/";
 
 #endif	/* TOOLS_H */

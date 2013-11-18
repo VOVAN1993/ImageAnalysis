@@ -9,26 +9,25 @@
 #ifndef UTIL_H
 #define	UTIL_H
 #include "tools.h"
-class Image1{
-private:
-    Image1(const Image1&);
+class Image{
+
 public:
     double value;
     string name;
-    Image1(double _value,string _name){
+    Image(double _value,string _name){
         name=_name;
         value=_value;
     }
 };
-void print_vector_to_file(string name,vector<Image1*> &vec){
+void print_vector_to_file(string name,vector<Image> &vec){
     freopen(name.c_str(), "w", stdout);
     for (int i = 0; i < vec.size(); ++i) {
-        cout<<vec[i]->name.c_str()<<"\n";
+        cout<<vec[i].name.c_str()<<"\n";
     }
     fclose(stdout);
 }
-bool cmpImage(Image1* i1, Image1*i2) {
-    return i1->value < i2->value;
+bool cmpImage(Image i1, Image i2) {
+    return i1.value < i2.value;
 }
 
 
